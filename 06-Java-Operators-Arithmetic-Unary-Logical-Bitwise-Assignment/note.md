@@ -1,203 +1,390 @@
-# Java Operators & Bitwise/Shift Semantics
+# Java Operators and Bitwise/Shift Semantics
 
-## Hook: Beyond Basic Math
-Programming is just math with a memory system. If you only know `+` and `-`, you are missing the levers that allow you to manipulate memory at the bit level and control the flow of complex logic. Operators are the vocabulary of computer science.
+## Hook
 
-## What Is It?
-Operators are symbols that tell the Java compiler to perform specific mathematical, logical, or bitwise manipulations on data. They are the essential building blocks for evaluating expressions, managing state, and performing conditional checks.
+Programming is not just math; it is math plus rules about types, memory, and evaluation order. Operators are the tiny symbols that let you control all three.
 
-**One-sentence summary:** Operators are the fundamental building blocks of expression evaluation in Java, enabling everything from simple arithmetic to complex bit-level memory manipulation and conditional control flow.
+Once these rules click, bit tricks, boolean logic, and precedence stop feeling random and start feeling mechanical.
 
-**Intuition:** Think of operators as functions with shorthand syntax. Instead of calling a function like `add(a, b)`, we use `a + b`. They are the "verbs" of your code — they define what action is happening to your data.
+## What it is
 
-## Taxonomy of Operators
-1. **Arithmetic:** Basic math (`+`, `-`, `*`, `/`, `%`).
-2. **Unary:** Operations on a single operand (`++`, `--`, `!`, `-` as a sign).
-3. **Relational:** Comparing values (`==`, `!=`, `<`, `>`, `<=`, `>=`), always returning a `boolean`.
-4. **Logical:** Combining conditions (`&&`, `||`, `!`).
-5. **Bitwise:** Manipulating bits directly (`&`, `|`, `^`, `~`, `<<`, `>>`, `>>>`).
-6. **Assignment:** Updating variables (`=`, `+=`, `*=`, etc.).
-7. **Ternary:** A shorthand `if-else` (`condition ? trueVal : falseVal`).
+Operators are symbols that tell Java to perform arithmetic, relational, logical, bitwise, assignment, or conditional work on values. The PDF covers arithmetic, relational, bitwise, logical, assignment, and operator precedence as the main building blocks.
 
-## The "Gotchas": Pre vs. Post Increment
-The most common pitfall for beginners is the difference between `i++` and `++i`:
+## One-sentence summary
 
-- **Post-increment (`i++`):** Use the current value, then increment.
-- **Pre-increment (`++i`):** Increment the value, then use it.
+Java operators are the language’s execution vocabulary: they define how values are combined, compared, shifted, and assigned, and they follow strict rules for precedence, promotion, and evaluation order.
+
+## Intuition
+
+Think of operators as verbs and operands as nouns. The expression `a + b` is just shorthand for “add these two values,” while `a < b` asks a question and returns a boolean result.
+
+The important mental model is that Java does not treat all operators equally. It first decides **what kind of operation** is being performed, then applies precedence, then applies type conversion rules, and only then produces the final result.
+
+## Operator groups
+
+The PDF organizes operators into these categories:
+
+- Arithmetic: `+`, `-`, `*`, `/`, `%`, and compound forms like `+=`, `-=`, `*=`, `/=`, `%=`.
+- Unary: `++`, `--`, `!`, unary `+`, unary `-`, and type cast.
+- Relational: `==`, `!=`, `<`, `>`, `<=`, `>=`.
+- Bitwise: `&`, `|`, `^`, `~`, `<<`, `>>`, `>>>`, and compound forms like `&=`, `|=`, `^=`, `<<=`, `>>=`, `>>>=`.
+- Logical: `&&`, `||`, `!`.
+- Assignment: `=`, plus compound assignment forms.
+- Ternary: `condition ? trueValue : falseValue`.
+
+That classification is useful because each group has different rules, especially around type checking and short-circuiting.
+
+## Arithmetic operators
+
+Arithmetic operators behave the way you would expect:
+
+- `+` adds.
+- `-` subtracts.
+- `*` multiplies.
+- `/` divides.
+- `%` returns the remainder.
+
+Example:
+
+```java
+int a = 10;
+int b = 3;
+
+System.out.println(a + b); // 13
+System.out.println(a / b); // 3
+System.out.println(a % b); // 1
+```
+
+The main thing to remember is that arithmetic in Java still respects operand types, so integer division truncates toward zero.
+
+## Pre vs post increment
+
+This is one of the most common operator mistakes. The PDF highlights the difference between postfix and prefix increment, and this distinction matters because the expression result changes depending on when the increment happens.
+
+- `i++` uses the current value, then increments.
+- `++i` increments first, then uses the new value.
+
+Example:
 
 ```java
 int i = 5;
-int a = i++; // a is 5, i is 6
-int b = ++i; // b is 7, i is 7
+int a = i++; // a = 5, i = 6
+int b = ++i; // i = 7, b = 7
 ```
 
-## Type Promotion in Bitwise Operations
-In Java, type promotion makes bitwise results come out as `int` in many cases, even when both inputs are smaller types like `byte` or `short`. The operation is performed after widening the operands, and you often need an explicit cast to store the result back into a smaller type.
+A good rule: postfix is “use then change,” prefix is “change then use.”
 
-### What Gets Promoted
-For bitwise and shift operators, Java applies numeric promotion before evaluating the expression. In practice, `byte`, `short`, and `char` are promoted to `int`, so expressions like `b1 | b2`, `b1 ^ b2`, `~b`, `b << 1`, and `b >> 1` typically produce an `int` result.
+## Relational operators
 
-### Why This Matters
-Because the result is `int`, assigning it back to a `byte` or `short` can fail or require a cast. For example, `byte r = (byte) (b1 | b2);` is valid, while `byte r = b1 | b2;` usually is not, because the expression type is `int`.
+Relational operators compare values and return a boolean. The PDF shows the core set clearly:
 
-### Example
+- `==`
+- `!=`
+- `<`
+- `>`
+- `<=`
+- `>=`
+
+Example:
+
 ```java
-byte a = 5;      // 00000101
-byte b = 3;      // 00000011
+int a = 5;
+int b = 10;
 
-int x = a | b;   // 7, result type is int
-byte y = (byte) (a | b); // 7, cast back to byte
+boolean c = (a == b); // false
+boolean d = (a < b);  // true
 ```
-Here, `a | b` is computed as an `int`, so `x` is fine, but `y` needs a cast.
 
-### Compound Assignment Shortcut
-Compound operators like `|=`, `^=`, `&=`, `<<=`, and `>>=` include an implicit cast back to the left-hand type, which is why `b |= 1;` compiles even though `b | 1` is an `int` expression.
+Important: `=` is assignment, while `==` is comparison. Mixing them up is a classic beginner bug.
 
-### Subtle Signed-Byte Behavior
-A common surprise is that shifting a negative byte can keep sign bits because the byte is first promoted to a sign-extended `int`. If you want to treat a byte as unsigned before bit work, masking with `0xFF` is often necessary.
+## Logical operators
 
-## Widening Conversion: Sign Extension, Not Zero Fill
-Java does not just copy the 8 bits of a byte into a 32-bit int and fill the front with zeros. For signed byte values, it uses sign extension: the top bit is copied into all the new high bits so the numeric value stays the same.
+Logical operators work on booleans:
 
-### Why -128 Stays Negative
-`byte` in Java is signed two's-complement, so -128 is `10000000` in 8 bits. When it is widened to `int`, Java fills the upper 24 bits with 1s, producing `11111111 11111111 11111111 10000000`, which is still -128 as an `int`. That is the key idea: widening preserves the *value*, not the raw bit pattern interpretation you might expect from unsigned data.
+- `&&` is logical AND.
+- `||` is logical OR.
+- `!` is logical NOT.
 
-### Example
+The PDF’s truth tables show that `&&` returns true only when both sides are true, and `||` returns true when at least one side is true.
+
+Example:
+
 ```java
-byte b = (byte) 0x80;   // -128
+boolean ok = (a < b) && (a < c);
+boolean any = (a < b) || (a < c);
+```
+
+The key feature here is **short-circuiting**: Java may stop early if the answer is already determined.
+
+## Short-circuiting
+
+For `A && B`, if `A` is false, Java does not evaluate `B`. For `A || B`, if `A` is true, Java does not evaluate `B`.
+
+This matters in real code:
+
+```java
+if (obj != null && obj.isValid()) {
+    ...
+}
+```
+
+If `obj` is null, the second part is skipped, which prevents `NullPointerException`.
+
+That is why `&&` and `||` are more than logic operators; they are also control-flow tools.
+
+## Bitwise operators
+
+The PDF introduces bitwise operators as direct bit manipulation tools:
+
+- `&` AND
+- `|` OR
+- `^` XOR
+- `~` NOT
+- `<<` left shift
+- `>>` arithmetic right shift
+- `>>>` logical right shift
+
+These operators work on the binary representation of values, which is why they are useful for masks, flags, compression tricks, and low-level performance code.
+
+### Example: `&`
+
+```java
+byte a = 2; // 00000010
+byte b = 3; // 00000011
+
+int c = a & b; // 2
+```
+
+Bitwise AND keeps a bit only when both inputs have `1` in that position.
+
+### Truth table for `&`
+
+- `0 & 0 = 0`
+- `0 & 1 = 0`
+- `1 & 0 = 0`
+- `1 & 1 = 1`
+
+That is exactly the pattern shown in the PDF’s table.
+
+## Type promotion
+
+One of the most important ideas in the PDF is that small integer types are promoted before many bitwise and shift operations. In practice, `byte`, `short`, and `char` are promoted to `int` for the computation.
+
+That means:
+
+```java
+byte a = 5;
+byte b = 3;
+
+int x = a | b;      // fine
+byte y = (byte)(a | b); // needs cast
+```
+
+Why? Because `a | b` is computed as an `int`, not as a `byte`.
+
+This is a critical Java rule because it explains many “why does this not compile?” moments.
+
+## Compound assignment
+
+Compound operators like `|=`, `&=`, `^=`, `<<=`, and `>>=` include an implicit cast back to the left-hand side type. The PDF points out this shortcut correctly.
+
+Example:
+
+```java
+byte b = 5;
+b |= 1;
+```
+
+This compiles even though `b | 1` would normally be an `int` expression. The compound assignment does the cast for you.
+
+## Sign extension
+
+The PDF also shows that widening a signed `byte` to `int` preserves the value using **sign extension**, not zero fill.
+
+Example:
+
+```java
+byte b = (byte)0x80; // -128
 int i = b;
-System.out.println(i);  // -128
-System.out.println(Integer.toBinaryString(i));
 ```
-The binary string looks "full of 1s" on the left because the sign bit was extended, not zero-filled.
 
-### Compare With Zero Extension
-If Java instead filled the upper bits with 0s, the same pattern would become `00000000 00000000 00000000 10000000`, which is 128 — changing the value. Java avoids this for signed widening conversions.
+The `int` becomes `11111111 11111111 11111111 10000000`, which still represents `-128`.
 
-### If You Want Unsigned Interpretation
-If your intent is "treat these 8 bits as 0..255", mask it:
+This matters because Java treats signed bytes as signed values when promoting them.
+
+### Unsigned interpretation
+
+If you want the raw 0–255 interpretation of a byte, use masking:
+
 ```java
-byte b = (byte) 0x80;
-int i = b & 0xFF;   // 128
+int x = b & 0xFF;
 ```
-`& 0xFF` clears the upper 24 bits after promotion (or removes the sign-extended top bits), keeping only the low 8 bits — the unsigned interpretation you probably expected.
 
-## Shift Count Masking: x << y When y < 0
-In Java, the shift distance is masked, not rejected:
+That clears the upper bits after promotion and gives the unsigned value you probably meant.
 
-- For `int` shifts: only the low 5 bits of `y` are used, so `x << y` behaves like `x << (y & 0x1F)`.
-- For `long` shifts: only the low 6 bits are used, effectively `y & 0x3F`.
+## Shift operators
 
-So:
-- `1 << -1` becomes `1 << 31` for `int`, because `-1 & 31 = 31`.
-- `1 << -33` becomes `1 << 31` too, for the same reason.
+Shift operators are where the PDF gets especially interesting. Java’s shift rules are not arbitrary; they are designed around fixed-width machine words.
 
-That means negative shift counts do not throw an exception in Java; they wrap through masking.
+### Left shift: `<<`
 
-### Why This Feels Surprising
-Two separate rules are interacting:
-- `byte` is signed, so widening to `int` uses sign extension.
-- Shift counts are masked, so negative `y` values are converted into a valid shift distance.
+Left shift moves bits to the left and inserts zeros on the right. The PDF shows examples like:
 
-A useful mental model: Java first converts operands to a working `int`/`long` form, then applies the operator, then stores or casts the result if needed.
+- `5 << 1 = 10`
+- `5 << 2 = 20`
 
-## Bit-by-Bit Walkthroughs
+This makes left shift useful as a fast multiplication-by-powers-of-two trick.
 
-### 1) byte -128 → int
+Example:
+
 ```java
-byte b = -128;
-int i = b;
+int x = 5;
+System.out.println(x << 1); // 10
+System.out.println(x << 2); // 20
 ```
-- `b` is `10000000`.
-- Java widens to 32 bits.
-- Because `b` is signed and negative, the new bits become 1s.
-- Result: `11111111 11111111 11111111 10000000` = -128.
 
-### 2) int x = 1; x << -1
+### Arithmetic right shift: `>>`
+
+The PDF shows that `>>` preserves the sign bit for negative values. This is called arithmetic right shift.
+
+Example:
+
 ```java
-int x = 1;
-int y = -1;
-int z = x << y;
+byte b = 32;
+System.out.println(b >> 1); // 16
 ```
-- Java uses `y & 31`.
-- `-1 & 31 = 31`.
-- So `z = 1 << 31`.
-- Result: `0x80000000`, which is -2147483648.
 
-### Practical Takeaway
-- `byte -> int` preserves sign by sign extension.
-- Use `& 0xFF` when you want an unsigned byte value.
-- Negative shift counts do not error in Java; they are masked into a legal shift distance.
+For negative numbers, the leftmost bit is copied inward so the sign stays negative. That is why `-128 >> 1` becomes `-64`, then `-32`, and so on.
 
-## Arithmetic (>>) vs Logical (>>>) Right Shift
-Java's `>>` is an arithmetic right shift, so it preserves signedness by copying the original sign bit into the new leftmost bits. For a negative `int`, the sign bit is 1, so every shifted-in bit is also 1, keeping the result negative.
+### Logical right shift: `>>>`
 
-### What Actually Happens
-Take -8 as a 32-bit two's-complement value:
-```
-11111111 11111111 11111111 11111000
-```
-Now do `-8 >> 1`:
-```
-11111111 11111111 11111111 11111100
-```
-The rightmost bit is discarded, and a 1 is inserted on the left because the number was negative. That gives -4, so the sign is preserved.
+`>>>` shifts right and fills the left side with zeros. The PDF identifies this as an unsigned-style right shift.
 
-### Why This Works
-In two's complement, the top bit is the sign bit. Arithmetic right shift keeps that top bit unchanged by replicating it, which is why negative numbers stay negative and positive numbers stay positive.
-
-### Difference From >>>
-Java also has `>>>`, the logical right shift, which always inserts 0 on the left. So for a negative number, `>>>` changes the sign and usually produces a large positive value instead.
+Example:
 
 ```java
 int x = -1;
 System.out.println(x >> 1);   // -1
 System.out.println(x >>> 1);  // 2147483647
 ```
--1 is all 1s in binary, so `>> 1` keeps filling with 1s, while `>>> 1` fills with 0s.
 
-### Important Nuance
-`>>` does not "preserve the exact original number" — it preserves the *sign*. The numeric value still changes because bits are shifted out on the right; only the sign behavior is maintained.
+The key difference is that `>>` preserves sign, while `>>>` does not.
 
-A useful intuition: `>>` behaves like dividing by 2 while rounding toward negative infinity for signed integers, whereas `>>>` treats the bits as unsigned and shifts in zeros.
+## Shift count masking
 
-## Internals: The Truth About Bitwise Shift Operators
-Java's shift operators (`<<`, `>>`, `>>>`) behave differently than expected due to type promotion:
+A subtle rule from the PDF is that shift counts are masked rather than rejected. For `int`, Java uses only the low 5 bits of the shift amount, which is equivalent to shifting by `shift % 32`. For `long`, it uses the low 6 bits, equivalent to `shift % 64`.
 
-- When you perform arithmetic or bitwise operations on `byte` or `short`, Java internally promotes them to `int` (32-bit).
-- **Modulo 32 rule:** For `int` types, the shift amount is effectively `shift_amount % 32` (via masking with the low 5 bits). If you shift an integer by 33, it's the same as shifting it by 1.
-- **Sign extension:** `>>` (signed shift) preserves the sign bit (MSB), whereas `>>>` (unsigned shift) fills with zeros.
+That means:
 
-## Logic & Short-Circuiting
-The logical `&&` and `||` operators perform short-circuit evaluation:
+```java
+int x = 1;
+System.out.println(x << -1);  // same as x << 31
+```
 
-- In `A && B`, if `A` is `false`, `B` is never evaluated.
-- This is critical for performance and preventing `NullPointerException` (e.g., `if (obj != null && obj.isValid())`).
+So negative shift counts do not throw an exception in Java; they wrap through masking.
 
-## Comparison: Logical vs. Bitwise Operators
+This is one of the most useful “Java is precise but surprising” rules to remember.
 
-| Operator | Type | Behavior |
-| --- | --- | --- |
-| `&&` | Logical | Short-circuits; operates on `boolean` |
-| `&` | Bitwise | Evaluates both sides; operates on `int`/`boolean` |
+## Logical vs bitwise on booleans
 
-## Key Takeaways
-- Operators are symbols for functions: they translate directly to CPU instructions.
-- Precedence matters: always use parentheses `()` to enforce order rather than memorizing the massive Java precedence table.
-- Type promotion: operations on small types (`byte`, `char`) often result in `int` values.
-- Assignment is an expression: `a = b = c = 10` is valid because the assignment operator returns the value assigned.
+Java allows both logical and bitwise-style operators on booleans, but they are not the same:
 
-## Questions to Think About
-1. Why would you ever use a bitwise `&` instead of a logical `&&`?
-2. What happens to the sign bit when shifting a negative number using `>>` versus `>>>`?
-3. Why does Java force type promotion to `int` for operations on `byte` and `short`?
+- `&&` and `||` short-circuit.
+- `&` and `|` evaluate both sides.
 
-## Minimal Self-Test
-1. Predict: `int x = 10; x = x++ + ++x;` What is the final value of `x`?
-2. Which operator has the lowest precedence in Java?
-3. What is the difference between `a == b` and `a.equals(b)` in the context of object references?
+This matters when the right-hand side has side effects or could fail.
 
-## What to Learn Next
-- **Control flow:** `if-else`, `switch`, and loops (which rely heavily on relational and logical operators).
-- **Type casting:** Understanding widening vs. narrowing conversions.
-- **Data structures:** Specifically how bit manipulation helps in designing efficient algorithms.
+Example:
+
+```java
+if (a < b & expensiveCheck()) { ... }
+```
+
+`expensiveCheck()` is still called even if `a < b` is false, because `&` does not short-circuit.
+
+## Operator precedence
+
+The PDF includes a precedence table, and the main lesson is that parentheses should be used when clarity matters.
+
+A simplified mental model:
+
+1. Unary operators
+2. Multiplicative operators
+3. Additive operators
+4. Shifts
+5. Relational operators
+6. Equality operators
+7. Bitwise operators
+8. Logical operators
+9. Ternary
+10. Assignment
+
+Example:
+
+```java
+int a = b + c * d;
+```
+
+Here `c * d` happens before addition.
+
+If you want `b + c` first, write:
+
+```java
+int a = (b + c) * d;
+```
+
+## Comparison table
+
+| Concept    | Example           | Behavior                |
+| ---------- | ----------------- | ----------------------- | ---------------------- | ----------------------------------- |
+| Arithmetic | `+`, `*`          | Numeric computation     |
+| Relational | `a < b`           | Returns boolean         |
+| Logical    | `&&`, `           |                         | `                      | Boolean logic with short-circuiting |
+| Bitwise    | `&`, `            | `, `^`                  | Bit-level manipulation |
+| Shift      | `<<`, `>>`, `>>>` | Move bits left or right |
+| Assignment | `=`               | Stores a value          |
+| Ternary    | `?:`              | Compact if-else         |
+
+## Common gotchas
+
+- `=` and `==` are not the same. Assignment vs comparison.
+- `i++` and `++i` produce different results in expressions.
+- `byte` and `short` expressions are often promoted to `int`.
+- `&&` and `||` short-circuit, but `&` and `|` do not.
+- `>>` preserves sign, while `>>>` fills with zeros.
+- Shift counts are masked, so negative shifts do not throw errors.
+
+## Step-by-step examples
+
+### Example 1: `byte a = 5; a << 1`
+
+- `5` in binary: `00000101`
+- Shift left by 1: `00001010`
+- Result: `10`
+
+### Example 2: `byte b = -128; b >> 1`
+
+- `-128` is `10000000` in 8-bit two’s complement.
+- Shift right arithmetic keeps the sign bit.
+- Result becomes `-64`, then `-32`, and so on.
+
+### Example 3: `int x = 1; x << -1`
+
+- Java masks `-1` to `31`.
+- So this becomes `1 << 31`.
+- Result is `0x80000000`, which is `-2147483648`.
+
+## Minimal self-test
+
+1. What is the difference between `a = b` and `a == b`?
+2. Why does `i++` differ from `++i`?
+3. Why does `byte r = a | b;` often fail to compile?
+4. What is the difference between `>>` and `>>>`?
+5. Why does `1 << -1` not throw an error in Java?
+
+## What to learn next
+
+1. **Type casting** — widening vs narrowing conversions.
+2. **Binary representation** — two’s complement and bit masks.
+3. **Control flow** — how logical operators influence `if` conditions.
+4. **Low-level data structures** — bitsets, flags, and packed encodings.
