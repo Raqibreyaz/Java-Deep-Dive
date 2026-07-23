@@ -24,7 +24,7 @@ class Student {
         this.collegeName = collegeName;
     }
 
-    void markAttendance() {
+    void markAttendance() {        
         System.out.printf("Attendance marked by %s\n", name);
     }
 

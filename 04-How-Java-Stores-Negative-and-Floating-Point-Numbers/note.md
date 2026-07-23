@@ -1,5 +1,3 @@
-Here is a revised note **directly based on your PDF**, but cleaned up, better structured, and explained more deeply. The content below follows the PDF’s sequence: negative integers via two’s complement, then floating-point via IEEE 754, then the precision issue with `0.7`, then the float-vs-double-vs-BigDecimal comparison.
-
 # Java Number Representation: Integers, Floats, and Precision
 
 ## Hook
@@ -191,5 +189,3 @@ If you are writing code for graphics, simulations, or machine learning, `float` 
 1. **Bitwise operators**: `&`, `|`, `^`, `<<`, `>>`.
 2. **`BigDecimal` internals**: how exact decimal arithmetic is implemented.
 3. **Java memory model**: how primitives and objects are stored in stack vs heap.
-
-If you want, I can now turn this into the same style as your arrays note: more “teaching note” polish, more diagrams, and a slightly more interview-friendly final version.
