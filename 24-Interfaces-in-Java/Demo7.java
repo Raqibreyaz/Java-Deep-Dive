@@ -1,0 +1,32 @@
+public class Demo7 {
+    public static void main(String[] args) {
+        D d = new D();
+        d.fun();
+    }
+}
+
+// Diamond problem solved by interfaces
+
+interface A {
+    void fun();
+}
+
+interface B extends A {
+    default void fun() {
+        System.out.println("B's fun");
+    }
+}
+
+interface C extends A {
+    default void fun() {
+        System.out.println("C's fun");
+    }
+}
+
+class D implements B, C {
+    @Override
+    public void fun() {
+        B.super.fun();
+        C.super.fun();
+    }
+}
